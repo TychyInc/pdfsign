@@ -3,6 +3,7 @@ package sign
 import (
 	"crypto"
 	"encoding/asn1"
+	"encoding/hex"
 	"errors"
 	"fmt"
 	"io"
@@ -38,13 +39,15 @@ func findFirstPage(parent pdf.Value) (pdf.Value, error) {
 
 func pdfString(text string) string {
 	if !isASCII(text) {
-		// UTF-16BE
+		// Encode as UTF-16BE with BOM and output as hexadecimal string to avoid
+		// unescaped characters (e.g. 0x5C) breaking PDF literal strings.
 		enc := unicode.UTF16(unicode.BigEndian, unicode.UseBOM).NewEncoder()
 		res, _, err := transform.String(enc, text)
 		if err != nil {
 			panic(err)
 		}
-		return "(" + res + ")"
+		hexEncoded := strings.ToUpper(hex.EncodeToString([]byte(res)))
+		return "<" + hexEncoded + ">"
 	}
 
 	// UTF-8
