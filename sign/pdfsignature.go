@@ -402,7 +402,7 @@ func (context *SignContext) GetTSA(sign_content []byte) (timestamp_response []by
 		req.SetBasicAuth(context.SignData.TSA.Username, context.SignData.TSA.Password)
 	}
 
-	client := &http.Client{}
+	client := &http.Client{Timeout: context.SignData.TSA.Timeout}
 	resp, err := client.Do(req)
 	code := 0
 

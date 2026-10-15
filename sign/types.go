@@ -20,6 +20,9 @@ type TSA struct {
 	URL      string
 	Username string
 	Password string
+	// Timeout bounds the RFC 3161 request to the timestamp authority. Zero
+	// keeps the historical behavior (no client timeout).
+	Timeout time.Duration
 }
 
 type RevocationFunction func(cert, issuer *x509.Certificate, i *revocation.InfoArchival) error
